@@ -81,7 +81,7 @@ namespace Puerts
             int libVersion = PuertsDLL.GetLibVersion();
             if (libVersion != libVersionExpect)
             {
-                throw new InvalidProgramException("expect lib version " + libVersionExpect + ", but got " + libVersion);
+                UnityEngine.Debug.LogError("expect lib version " + libVersionExpect + ", but got " + libVersion);
             }
             // PuertsDLL.SetLogCallback(LogCallback, LogWarningCallback, LogErrorCallback);
             this.loader = loader;
