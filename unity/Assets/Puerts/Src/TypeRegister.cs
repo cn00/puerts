@@ -421,7 +421,7 @@ namespace Puerts
 
         internal void AddLazyStaticWrapLoader(Type type, Func<TypeRegisterInfo> lazyStaticWrapLoader)
         {
-            lazyStaticWrapLoaders.Add(type, lazyStaticWrapLoader);
+            lazyStaticWrapLoaders[type] = lazyStaticWrapLoader;
         }
 
         // #lizard forgives

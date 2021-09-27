@@ -165,21 +165,22 @@ namespace Puerts
                 PuertsDLL.CreateInspector(isolate, debugPort);
             }
 
-            ExecuteFile("puerts/init.js");
-            ExecuteFile("puerts/log.js");
-            ExecuteFile("puerts/cjsload.js");
-            ExecuteFile("puerts/modular.js");
-            ExecuteFile("puerts/csharp.js");
+            ExecuteFile("puerts/init");
+            ExecuteFile("puerts/log");
+            ExecuteFile("puerts/cjsload");
+            ExecuteFile("puerts/modular");
+            ExecuteFile("puerts/csharp");
             if (mode != JsEnvMode.Node) 
             {
-                ExecuteFile("puerts/timer.js");
+                ExecuteFile("puerts/timer");
             }
-            ExecuteFile("puerts/events.js");
-            ExecuteFile("puerts/promises.js");
+            ExecuteFile("puerts/events");
+            ExecuteFile("puerts/promises");
             if (mode != JsEnvMode.Node) 
             {
-                ExecuteFile("puerts/polyfill.js");
+                ExecuteFile("puerts/polyfill");
             }
+            // ExecuteFile("puerts/system");
 
 #if UNITY_EDITOR
             if (OnJsEnvCreate != null) 
@@ -201,6 +202,7 @@ namespace Puerts
                     throw new InvalidProgramException("can not find " + filename);
                 }
                 Eval(context, debugPath);
+                UnityEngine.Debug.Log($"ExecuteFile:{filename}");
             }
             else
             {

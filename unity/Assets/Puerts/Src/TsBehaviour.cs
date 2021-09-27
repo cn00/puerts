@@ -4,54 +4,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using PuertsStaticWrap;
 using UnityEngine.UI;
 
 public delegate JSObject ModuleInit(TsBehaviour mono);
 //但从性能角度这并不是最佳实践，会导致过多的跨语言调用
 public class TsBehaviour : MonoBehaviour
 {
-    
-    public class TsLoader : ILoader
-    {
-        private string mJsRoot;
-        private string mAornJsRoot;
-
-        public TsLoader(string jsRoot)
-        {
-            mJsRoot = jsRoot;
-            mAornJsRoot = jsRoot + "Aorn/";
-        }
-
-        private bool isPuertsModule(string filePath){
-            return filePath.StartsWith("puerts/");
-        }
-
-        public bool FileExists(string filePath)
-        {
-            string rootpath = isPuertsModule(filePath) ? mJsRoot : mAornJsRoot;
-            string asset = string.Empty;
-            string path = path = PathUnified(rootpath, filePath);
-            var b = Resources.Load(path.Replace(".js", ""));
-            return b != null;
-        }
-
-        public string ReadFile(string filePath, out string debugPath)
-        {
-            string rootpath = isPuertsModule(filePath) ? mJsRoot : mAornJsRoot; 
-            debugPath = PathUnified(Application.dataPath, "Resources/", rootpath, filePath);
-            #if UNITY_EDITOR_WIN
-            debugPath = debugPath.Replace("/", "\\");
-            #endif
-            string path = PathUnified(rootpath, filePath);
-            return ((TextAsset)Resources.Load(path.Replace(".js", ""))).text;
-            return Resources.Load<TsAsset>(path.Replace(".js", "")).text;
-        }
-
-        private string PathUnified(params string[] args){
-            return Path.Combine(args).Replace("\\","/");
-        }
-    }
-
     public TsAsset tsAsset;
     [Serializable]
     public class Injection
@@ -71,7 +30,18 @@ public class TsBehaviour : MonoBehaviour
     public Action JsUpdate;
     public Action JsOnDestroy;
 
-    static JsEnv jsEnv => new JsEnv(new DefaultLoader());//;
+    private static JsEnv _jsEnv = null;
+    static JsEnv jsEnv {
+        get {
+            if (_jsEnv == null)
+            {
+                _jsEnv = new JsEnv(new DefaultLoader());
+                // PuertsStaticWrap.AutoStaticCodeRegister.Register(_jsEnv);
+                _jsEnv.AutoUsing();
+            }
+            return _jsEnv;
+        }
+    }//;
     #if UNITY_EDITOR
     [UnityEditor.MenuItem("Puerts/ResetJsEnv")]
     public static void ResetJsEnv()
@@ -81,18 +51,18 @@ public class TsBehaviour : MonoBehaviour
     }
     #endif
 
-    private JSObject jsObject;
+    public JSObject jsObject;
     void Awake()
     {
-        PuertsStaticWrap.AutoStaticCodeUsing.AutoUsing(jsEnv);
-        var sl = tsAsset.tsName.Replace(".js", "").Split('/');
-        var ts = $"var m = require ('{tsAsset.tsName.Replace(".js", "")}');m.{sl[sl.Length - 1]}_init;";
+        // var sl = tsAsset.tsName.Replace(".js", "").Split('/');
+        // var ts = $"var m = require ('{tsAsset.tsName.Replace(".js", "")}');m.{sl[sl.Length - 1]}_init;";
         // var init = jsEnv.Eval<ModuleInit>(ts, tsAsset.tsName);// this ok
-        var init = jsEnv.Eval<ModuleInit>(tsAsset.text.Replace("export {};", ""), tsAsset.tsName);// TODO: use this solution
+        // Debug.Log($"TsBehavour init: [{ts}] jsObject:{jsObject}");
+        var init = jsEnv.Eval<ModuleInit>(tsAsset.text, tsAsset.tsName);// TODO: use this solution
 
         if (init != null) 
             jsObject = init(this);
-        Debug.Log($"TsBehavour init: [{ts}] jsObject:{jsObject}");
+        Debug.Log($"TsBehavour Awake init:{init} jsObject:{jsObject}");
         if (JsAwake != null) JsAwake();
     }
 

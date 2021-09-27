@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "jsx": "react",
+    "module": "commonjs",
     "inlineSourceMap": true,
     "noImplicitAny": true,
     "typeRoots": [

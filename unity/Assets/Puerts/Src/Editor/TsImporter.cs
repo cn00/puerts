@@ -25,7 +25,8 @@ public class TsImporter : ScriptedImporter
 
         var tsAsset = ScriptableObject.CreateInstance<TsAsset>();
         if(File.Exists(outPath)){
-            tsAsset.data = File.ReadAllBytes(outPath);
+            tsAsset.data = Encoding.UTF8.GetBytes(File.ReadAllText(outPath).Replace("export {};", "")
+                .Replace("Object.defineProperty(exports, \"__esModule\", { value: true });", ""));
         }
         else
         {
@@ -131,7 +132,7 @@ public class TsAssetEditor : UnityEditor.Editor
         if (GUI.Button(EditorGUILayout.GetControlRect(), "Open js file"))
         {
             var b = Unity.CodeEditor.CodeEditor.CurrentEditor.OpenProject($"Assets/JsOut~/{mTarget.tsName}", 1, 1);
-            // Debug.Log($"{Unity.CodeEditor.CodeEditor.CurrentEditorInstallation} open Assets/JsOut~/{mTarget.tsName} {b}");
+            Debug.Log($"{Unity.CodeEditor.CodeEditor.CurrentEditorInstallation} open Assets/JsOut~/{mTarget.tsName} {b}");
         }
 
         // EditorGUILayout.LabelField("Import Config(重新导入时生效)");
@@ -172,11 +173,11 @@ public class TsAssetEditor : UnityEditor.Editor
         {
             text = Encoding.UTF8.GetString(mTarget.data);
         }
-        var MaxTextPreviewLength = 4096;
-        if (text.Length > MaxTextPreviewLength + 3)
-        {
-            text = text.Substring(0, MaxTextPreviewLength) + "...";
-        }
+        // var MaxTextPreviewLength = 4096;
+        // if (text.Length > MaxTextPreviewLength + 3)
+        // {
+        //     text = text.Substring(0, MaxTextPreviewLength) + "...";
+        // }
 
         GUIStyle style = "ScriptText";
         var rect = GUILayoutUtility.GetRect(new GUIContent(text), style);
