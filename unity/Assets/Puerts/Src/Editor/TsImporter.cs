@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Codice.Client.BaseCommands;
+using PlasticGui.WorkspaceWindow.ExternalTools;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
@@ -122,10 +124,14 @@ public class TsAssetEditor : UnityEditor.Editor
         GUI.enabled = true;
         
         EditorGUILayout.SelectableLabel(TemplatePath);
-        var rect = EditorGUILayout.GetControlRect();
-        if (GUI.Button(rect, "Copy/Update TsBehaviour to Editor"))
+        if (GUI.Button(EditorGUILayout.GetControlRect(), "Copy/Update TsBehaviour template to Editor"))
         {
             UpdateTsTemplate();
+        }
+        if (GUI.Button(EditorGUILayout.GetControlRect(), "Open js file"))
+        {
+            var b = Unity.CodeEditor.CodeEditor.CurrentEditor.OpenProject($"Assets/JsOut~/{mTarget.tsName}", 1, 1);
+            // Debug.Log($"{Unity.CodeEditor.CodeEditor.CurrentEditorInstallation} open Assets/JsOut~/{mTarget.tsName} {b}");
         }
 
         // EditorGUILayout.LabelField("Import Config(重新导入时生效)");
@@ -173,7 +179,7 @@ public class TsAssetEditor : UnityEditor.Editor
         }
 
         GUIStyle style = "ScriptText";
-        rect = GUILayoutUtility.GetRect(new GUIContent(text), style);
+        var rect = GUILayoutUtility.GetRect(new GUIContent(text), style);
         rect.x = 0f;
         rect.y -= 3f;
         rect.width = EditorGUIUtility.currentViewWidth + 1f;

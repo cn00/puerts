@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine.Events;
 
 #if UNITY_EDITOR
@@ -67,7 +68,7 @@ namespace UnityEditor
                         if ((flag & i.envMask)>0)
                         {
                             TsMemberValue += $"\n\t\t\tthis.{Tskey}.{actions[j]}.AddListener(this.{Tskey}_{actions[j]}.bind(this));";
-                            if (!mTarget.tsAsset.text.Contains($"private {Tskey}_{actions[j]}("))
+                            if (!mTsText.Contains($"private {Tskey}_{actions[j]}("))
                             {
                                 AutoGenFunc += $"\n\tprivate {Tskey}_{actions[j]}(){{console.log(this.gameObject, \"ts on {Tskey}_{actions[j]}\");}}";
                             }
@@ -94,7 +95,8 @@ namespace UnityEditor
                                         System.Reflection.BindingFlags.Public | BindingFlags.SetProperty)
                 .Where(i =>
                 {
-                    var b = i.PropertyType.BaseType.ToString().Contains("UnityEvent");
+                    var b = i.PropertyType.BaseType.ToString().Contains("UnityEvent")
+                                && null == i.GetAttribute<ObsoleteAttribute>();
                     // Debug.Log($"property {i.Name}:{i.PropertyType} {b}");
                     return b;
                 }).Select(i=>i.Name);
@@ -165,7 +167,7 @@ namespace UnityEditor
                                     name = name.Substring(name.LastIndexOf('.') + 1);
                                     return name;
                                 }).ToArray();
-                                if (item.exportComIdx == -1)
+                                if (item.exportComIdx == -1 || item.exportComIdx >= comss.Length)
                                     item.exportComIdx = comss.Length - 1;
                                 item.exportComIdx = EditorGUILayout.Popup(item.exportComIdx, comss);
                                 item.com = coms[item.exportComIdx];

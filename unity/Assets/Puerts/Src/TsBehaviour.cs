@@ -84,14 +84,15 @@ public class TsBehaviour : MonoBehaviour
     private JSObject jsObject;
     void Awake()
     {
+        PuertsStaticWrap.AutoStaticCodeUsing.AutoUsing(jsEnv);
         var sl = tsAsset.tsName.Replace(".js", "").Split('/');
         var ts = $"var m = require ('{tsAsset.tsName.Replace(".js", "")}');m.{sl[sl.Length - 1]}_init;";
-        Debug.Log($"TsBehavour init: [{ts}]");
         // var init = jsEnv.Eval<ModuleInit>(ts, tsAsset.tsName);// this ok
         var init = jsEnv.Eval<ModuleInit>(tsAsset.text.Replace("export {};", ""), tsAsset.tsName);// TODO: use this solution
 
         if (init != null) 
             jsObject = init(this);
+        Debug.Log($"TsBehavour init: [{ts}] jsObject:{jsObject}");
         if (JsAwake != null) JsAwake();
     }
 
