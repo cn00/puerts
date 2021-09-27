@@ -26,7 +26,7 @@ public class TsImporter : ScriptedImporter
         var tsAsset = ScriptableObject.CreateInstance<TsAsset>();
         if(File.Exists(outPath)){
             tsAsset.data = Encoding.UTF8.GetBytes(File.ReadAllText(outPath).Replace("export {};", "")
-                .Replace("Object.defineProperty(exports, \"__esModule\", { value: true });", ""));
+                .Replace("Object.defineProperty(exports, \"__esModule\", { value: true });", "var exports = exports||{};"));
         }
         else
         {
@@ -95,7 +95,12 @@ public class ListenAllAssetImport:AssetPostprocessor
         var tss = importedAssets.Where(i => i.EndsWith(".ts"));
         if (tss.Count() > 0)
         {
-            // TsImporter.Compile("tsc");
+        
+            // TsImporter.Compile("bash", "-c 'export PATH=\"$PATH:/opt/homebrew/bin\";tsc;'");
+            // foreach (var i in tss)
+            // {
+            //     AssetDatabase.ImportAsset(i);
+            // }
             Debug.Log($"import ts: {string.Join(";", tss)}");
         }
     }

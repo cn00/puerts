@@ -17,8 +17,8 @@ export class #SCRIPTNAME#{
     mono:TsBehaviour;
     gameObject:UnityEngine.GameObject;
 }
-
-export function #SCRIPTNAME#_init(mono:TsBehaviour):#SCRIPTNAME# {
-    return new #SCRIPTNAME#(mono);
-}
-#SCRIPTNAME#_init
+(function () { 
+    return function (mono:TsBehaviour):#SCRIPTNAME# {
+        return new #SCRIPTNAME#(mono);
+    }
+})()

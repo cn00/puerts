@@ -70,7 +70,7 @@ namespace UnityEditor
                             TsMemberValue += $"\n\t\t\tthis.{Tskey}.{actions[j]}.AddListener(this.{Tskey}_{actions[j]}.bind(this));";
                             if (!mTsText.Contains($"private {Tskey}_{actions[j]}("))
                             {
-                                AutoGenFunc += $"\n\tprivate {Tskey}_{actions[j]}(){{console.log(this.gameObject, \"ts on {Tskey}_{actions[j]}\");}}";
+                                AutoGenFunc += $"\n\tprivate {Tskey}_{actions[j]}(v:any){{console.log(this.gameObject, \"ts on {Tskey}_{actions[j]}\", v);}}";
                             }
                         }
                     }
@@ -200,49 +200,6 @@ namespace UnityEditor
             }
             #endregion
 
-            #region InjectValues
-            {
-                // if (mTarget.InjectValues == null)
-                // {
-                //     mTarget.InjectValues = new List<TsBehaviour.InjectValue>();
-                // }
-                //
-                // var size = mTarget.InjectValues.Count;
-                // EditorGUILayout.BeginHorizontal();
-                // {
-                //     mShowInjectionValues = EditorGUILayout.Foldout(mShowInjectionValues, "InjectionValues", true);
-                //     size = EditorGUILayout.DelayedIntField(size);
-                // }
-                // EditorGUILayout.EndHorizontal();
-                //
-                // if(mTarget.InjectValues.Count != size)
-                // {
-                //     while (mTarget.InjectValues.Count < size)
-                //     {
-                //         mTarget.InjectValues.Add(new TsBehaviour.InjectValue());
-                //     }
-                //     if (mTarget.InjectValues.Count > size)
-                //     {
-                //         mTarget.InjectValues.RemoveRange(size, mTarget.InjectValues.Count-size);
-                //     }
-                // }
-                //
-                // if (mShowInjectionValues)
-                // {
-                //     for (var i = 0; i < mTarget.InjectValues.Count; ++i)
-                //     {
-                //         var item = mTarget.InjectValues[i] ?? new TsBehaviour.InjectValue();
-                //         EditorGUILayout.BeginHorizontal();
-                //         {
-                //             item.k = EditorGUILayout.DelayedTextField(item.k);
-                //             item.v = EditorGUILayout.DelayedTextField(item.v);
-                //         }
-                //         EditorGUILayout.EndHorizontal();
-                //     }
-                // }
-            }            
-            #endregion
-            
             // gen Ts code
             if (GUI.changed)
             {
